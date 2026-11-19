@@ -6,11 +6,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    # این خط به ربات میگه: برو داخل پوشه daria-launcher
-    defaults:
-      run:
-        working-directory: ./daria-launcher
 
     steps:
     - name: Checkout repository
@@ -22,17 +17,21 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    # مرحله اصلاح مجوزها، مسیر working-directory را اینجا مشخص می‌کنیم
     - name: Fix gradlew permissions
+      working-directory: ./daria-launcher
       run: |
         chmod +x gradlew
         sed -i 's/\r$//' gradlew
 
+    # مرحله Build، مسیر working-directory را اینجا مشخص می‌کنیم
     - name: Build debug APK
+      working-directory: ./daria-launcher
       run: ./gradlew assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        # اینجا هم مسیر فایل خروجی رو اصلاح کردیم
+        # مسیر فایل خروجی از ریشه مخزن حساب می‌شود
         path: daria-launcher/app/build/outputs/apk/debug/app-debug.apk
